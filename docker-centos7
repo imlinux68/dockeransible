@@ -1,0 +1,19 @@
+FROM centos:7
+
+RUN  yum install openssh-server initscripts epel-release python3 -y
+
+RUN echo 'root:password' | chpasswd
+
+RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+
+RUN mkdir /root/.ssh
+
+COPY docker.pub /root/.ssh/
+
+RUN cat /root/.ssh/docker.pub >> /root/.ssh/authorized_keys
+
+RUN service sshd start
+
+EXPOSE 22
+
+CMD ["/usr/sbin/sshd", "-D"]

@@ -1,0 +1,19 @@
+FROM ubuntu:22.04
+
+
+
+RUN apt update && \
+    apt install software-properties-common -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-add-repository ppa:ansible/ansible && \
+    apt update && \ 
+    apt install vim openssh-server ansible sshpass -y
+
+RUN mkdir /root/.ssh
+
+COPY docker /root/.ssh/
+
+WORKDIR /ansible
+
+RUN echo "[defaults]\nhost_key_checking = false\ninventory = ./hosts\ninterpreter_python = auto_silent" >> ansible.cfg && \
+    echo "[servers]\n\n\n[servers:vars]\nansible_user=root\nansible_ssh_private_key_file=/root/.ssh/docker" >> hosts
